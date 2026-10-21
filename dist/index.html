@@ -850,6 +850,14 @@ function flipRender(){if(!moving()||!FL)return render();
  FL.from(st,{targets:'#page [data-flip-id]',duration:.45,ease:'power2.inOut',stagger:.015,
   onEnter:els=>G.fromTo(els,{autoAlpha:0,y:10},{autoAlpha:1,y:0,duration:.35,stagger:.03,clearProps:'opacity,visibility,transform'})})}
 
+/* list ↔ card: rows change shape, so fade the old layout out and the new one in instead of morphing */
+let swapping=false;
+function swapLayout(key){const box=document.querySelector(`[data-act="layout"][data-key="${key}"]`)?.closest('.card')?.querySelector('.rows');
+ if(swapping)return;if(!moving()||!box)return render();
+ swapping=true;G.to(box,{autoAlpha:0,y:4,duration:.14,ease:'power1.in',onComplete:()=>{render();swapping=false;
+  const nb=document.querySelector(`[data-act="layout"][data-key="${key}"]`)?.closest('.card')?.querySelector('.rows');if(!nb)return;quiet(.8);
+  G.from(nb.children,{autoAlpha:0,y:10,duration:.3,ease:'power2.out',stagger:.035,clearProps:'opacity,visibility,transform'})}})}
+
 /* ---------- render ---------- */
 let prefill=null;
 function render(){
@@ -877,7 +885,7 @@ document.addEventListener('click',e=>{
  if(a==='switch'){const role=session.role==='ppm'?'pm':'ppm';session={role,method:session.method};saveSession();chatLog={};toggleChat(false);view='home';history.replaceState(null,'','#home');render();toast('Now viewing as '+USERS[role].title+' ('+co(USERS[role].company).name+').');return}
  if(a==='theme'){const r=document.documentElement;if(!still()){r.classList.add('theming');setTimeout(()=>r.classList.remove('theming'),400)}const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('pa-prm-theme',r.dataset.theme)}catch{}return}
  if(a==='filter'){filter[t.dataset.key]=t.dataset.val;flipRender();return}
- if(a==='layout'){layouts[t.dataset.key]=t.dataset.val;try{localStorage.setItem(LKEY,JSON.stringify(layouts))}catch{}flipRender();return}
+ if(a==='layout'){layouts[t.dataset.key]=t.dataset.val;try{localStorage.setItem(LKEY,JSON.stringify(layouts))}catch{}swapLayout(t.dataset.key);return}
  if(a==='close')return closeAll();
  if(a==='open-req')return reqDrawer(id);
  if(a==='open-deal')return dealDrawer(id);
