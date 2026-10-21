@@ -336,7 +336,14 @@ h3.sec{font-size:13px;color:var(--muted);font-weight:600;margin:22px 0 8px}
 
 /* ---------- motion: hover and press ---------- */
 .stat,.pcard,.role,.idp,.rows.as-cards .row{transition:transform .22s ease,box-shadow .22s ease,border-color .15s}
-a.stat:hover,.pcard:hover,.role:hover,.rows.as-cards .row:hover{transform:translateY(-2px);box-shadow:0 2px 4px #172b450a,0 14px 30px #172b4517}
+a.stat:hover,.pcard:hover,.role:hover,.rows.as-cards .row:hover{transform:translateY(-2px)}
+/* hover glow: a soft light that follows the pointer, plus a tinted halo */
+.stat,.pcard,.role,.rows.as-cards .row{--glow:color-mix(in srgb,var(--brand) 14%,transparent);position:relative;isolation:isolate}
+.stat.hero{--glow:#ffffff24}
+.stat::before,.pcard::before,.role::before,.rows.as-cards .row::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s ease;background:radial-gradient(280px circle at var(--mx,50%) var(--my,0%),var(--glow),transparent 70%)}
+.stat:hover::before,.pcard:hover::before,.role:hover::before,.rows.as-cards .row:hover::before{opacity:1}
+.stat:hover,.pcard:hover,.role:hover,.rows.as-cards .row:hover{border-color:color-mix(in srgb,var(--brand) 40%,var(--border));box-shadow:0 0 0 1px color-mix(in srgb,var(--brand) 14%,transparent),0 12px 32px color-mix(in srgb,var(--brand) 16%,transparent)}
+.stat.hero:hover{border-color:color-mix(in srgb,var(--brand) 55%,var(--night))}
 .idp:hover{transform:translateY(-1px)}
 .btn,.iconbtn,.idp,.seg button,.chips button{transition:background .15s,border-color .15s,color .15s,transform .12s ease,box-shadow .15s}
 .btn:active,.iconbtn:active,.idp:active,.seg button:active,.chips button:active,.role:active{transform:scale(.97)}
@@ -835,6 +842,8 @@ function animateScreen(){
  document.querySelectorAll('#page .stat strong').forEach(countUp);
 }
 function popIn(el,from={}){if(el&&moving())G.from(el,{autoAlpha:0,y:8,duration:.3,ease:'power3.out',clearProps:'opacity,visibility,transform',...from})}
+const GLOW='.stat,.pcard,.role,.rows.as-cards .row';
+document.addEventListener('pointermove',e=>{const c=e.target.closest?.(GLOW);if(!c)return;const r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px')},{passive:true});
 const tagFlip=()=>document.querySelectorAll('#page [data-row]').forEach(e=>{e.dataset.flipId=e.dataset.row});
 function flipRender(){if(!moving()||!FL)return render();
  const st=FL.getState('#page [data-flip-id]');render();quiet(.8);
@@ -866,7 +875,7 @@ document.addEventListener('click',e=>{
  if(a==='finish')return finish(t.dataset.method);
  if(a==='signout'){session=null;saveSession();toggleChat(false);chatLog={};render();toast('Signed out.');return}
  if(a==='switch'){const role=session.role==='ppm'?'pm':'ppm';session={role,method:session.method};saveSession();chatLog={};toggleChat(false);view='home';history.replaceState(null,'','#home');render();toast('Now viewing as '+USERS[role].title+' ('+co(USERS[role].company).name+').');return}
- if(a==='theme'){const r=document.documentElement;if(!still()){r.classList.add('theming');setTimeout(()=>r.classList.remove('theming'),400)}constdark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('pa-prm-theme',r.dataset.theme)}catch{}return}
+ if(a==='theme'){const r=document.documentElement;if(!still()){r.classList.add('theming');setTimeout(()=>r.classList.remove('theming'),400)}const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('pa-prm-theme',r.dataset.theme)}catch{}return}
  if(a==='filter'){filter[t.dataset.key]=t.dataset.val;flipRender();return}
  if(a==='layout'){layouts[t.dataset.key]=t.dataset.val;try{localStorage.setItem(LKEY,JSON.stringify(layouts))}catch{}flipRender();return}
  if(a==='close')return closeAll();
