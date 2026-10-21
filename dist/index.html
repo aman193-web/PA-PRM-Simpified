@@ -123,7 +123,7 @@ a{color:var(--brand)}
 .auth-tag{font-size:12.5px;font-weight:600;color:#a9bfdc;padding:4px 10px;border:1px solid #ffffff26;border-radius:999px}
 .auth-copy h1{max-width:17ch;font-size:clamp(28px,3vw,40px)}
 .scene{perspective:1400px;height:420px;margin:18px 0 6px;touch-action:none}
-.stage{position:relative;width:470px;max-width:100%;height:100%;transform-style:preserve-3d;transform:rotateX(calc(20deg + var(--ry,0deg))) rotateY(calc(-24deg + var(--rx,0deg)));transition:transform .3s ease-out}
+.stage{position:relative;width:470px;max-width:100%;height:100%;transform-style:preserve-3d;transform:scale(var(--sc,1)) rotateX(calc(20deg + var(--ry,0deg))) rotateY(calc(-24deg + var(--rx,0deg)));transition:transform .3s ease-out}
 .pane{--z:0px;position:absolute;width:236px;padding:14px 16px;border-radius:14px;background:linear-gradient(155deg,#2a5288f2,#163762f5);border:1px solid #ffffff2b;box-shadow:0 24px 44px #00000059;color:#dfe8f6;backdrop-filter:blur(8px);transform:translateZ(var(--z));transition:transform .35s ease,border-color .35s,box-shadow .35s;cursor:default}
 .pane:hover{transform:translateZ(calc(var(--z) + 28px))}
 .p1{left:0;top:0}.p2{left:110px;top:142px;--z:40px}.p3{left:220px;top:284px;--z:80px}
@@ -337,7 +337,17 @@ h3.sec{font-size:13px;color:var(--muted);font-weight:600;margin:22px 0 8px}
 /* ---------- mobile ---------- */
 .tabbar{display:none}
 @media (max-width:900px){
- .auth{grid-template-columns:1fr}.auth-side{padding:28px 24px}.scene{display:none}.auth-points{grid-template-columns:1fr 1fr 1fr;margin-top:18px}.auth-points li{padding:10px}.auth-side h1{font-size:30px}
+ .auth{grid-template-columns:1fr}.auth-side{padding:24px 20px 8px}.auth-side h1{font-size:27px;margin-bottom:10px}.auth-copy{margin-top:18px}.auth-side p{font-size:14px}
+ .scene{height:206px;margin:14px 0 0;touch-action:pan-y}.auth-points{display:none}
+ .stage{--sc:.5;transform-origin:50% 0;width:470px;max-width:none;height:420px;left:50%;margin-left:-236px}
+ .pane{width:236px}.p2{left:110px}.p3{left:220px}
+ .auth-main{padding:24px 20px 32px}.auth-card>p{margin-bottom:18px}
+ .chat{inset:0;width:100%;height:100%;height:100dvh;border:0;border-radius:0;z-index:58;padding-bottom:env(safe-area-inset-bottom,0px)}
+ .chat header{padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px}
+ .chat header button{min-height:36px;padding:6px 12px;border-radius:9px;background:#ffffff1f;color:#fff;font-weight:600}
+ .chat .composer input{font-size:16px}
+ .chat .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.chat .chips button{flex:none}
+ body.chat-open{overflow:hidden}body.chat-open .ask{display:none}
  .app{grid-template-columns:1fr}.side{display:none}.top .mob-only{display:grid}
  .top{padding:10px 16px}.top .sf span,.top .sf-connect span{display:none}.top .sf{width:30px;height:30px;padding:0;justify-content:center}.top .sf-connect{padding:6px 9px}.top .mlogo{display:inline-flex}.top .crumb{display:none}
  .pop{position:fixed;left:12px;right:12px;top:calc(66px + env(safe-area-inset-top,0px));width:auto;max-height:calc(100dvh - 170px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
@@ -352,7 +362,6 @@ h3.sec{font-size:13px;color:var(--muted);font-weight:600;margin:22px 0 8px}
  .tabbar a[aria-current="page"]{color:var(--brand)}
  .tabbar .count{position:absolute;top:2px;left:calc(50% + 6px);min-width:17px;height:17px;padding:0 5px;border-radius:9px;background:var(--accent);color:#2a1a00;font-size:10.5px;line-height:17px}
  .ask{bottom:calc(78px + env(safe-area-inset-bottom,0px));right:14px;padding:13px}.ask span{display:none}
- .chat{right:14px;bottom:calc(140px + env(safe-area-inset-bottom,0px));height:min(520px,calc(100% - 200px))}
 }
 @media (max-width:400px){
  .top{gap:6px;padding:10px 12px}.top .iconbtn{width:34px;height:34px}.top .sf-connect{padding:5px 7px}.top .sf{width:28px;height:28px}
@@ -844,7 +853,7 @@ const askBtn=document.createElement('button');askBtn.className='ask';askBtn.type
 const chatEl=document.createElement('section');chatEl.id='chat';chatEl.className='chat';chatEl.hidden=true;chatEl.setAttribute('aria-label','Copilot');
 document.body.append(chatEl,askBtn);
 askBtn.onclick=()=>toggleChat(chatEl.hidden);
-function toggleChat(open){chatEl.hidden=!open;askBtn.setAttribute('aria-expanded',String(open));if(open)setTimeout(()=>(chatEl.querySelector('#chat-in')||chatEl.querySelector('iframe'))?.focus(),30)}
+function toggleChat(open){chatEl.hidden=!open;document.body.classList.toggle('chat-open',open);askBtn.setAttribute('aria-expanded',String(open));if(open)setTimeout(()=>(chatEl.querySelector('#chat-in')||chatEl.querySelector('iframe'))?.focus(),30)}
 let chatLog={},chatRole=null;
 const CHIPS={ppm:['Show my partners','Which partners applied to my programs?','Which partners are under review?','Show received deals','Add the Helios Freight deal to Salesforce'],pm:['Show my partner companies','Import my Salesforce deals','Where did I send my deals?','Submit a $50K deal with Chevron closing in March','Which programs can I join?']};
 function setupChat(){const role=session.role;if(chatRole===role&&chatEl.innerHTML)return;chatRole=role;
