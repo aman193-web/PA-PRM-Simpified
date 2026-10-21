@@ -8,7 +8,7 @@ A compact partner sales workspace with connected lead qualification, deal regist
 python3 -m http.server 4173 --bind 127.0.0.1 --directory dist
 ```
 
-Open http://localhost:4173. The application is buildless; no dependency installation is required. All interface assets are bundled locally.
+Open http://localhost:4173 for the PartnerAssistant PRM home page (`index.html`). The earlier partner portal is at `/portal.html` and its manager side at `/manager.html`. The application is buildless; no dependency installation is required. All interface assets are bundled locally.
 
 ## GitHub Pages deployment
 

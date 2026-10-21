@@ -22,6 +22,7 @@ Update (v2): partner Overview adds "New leads for you" (Accept -> Contact -> Qua
 Register deal). Both portals add an "Ask PartnerAssistant" chat button; set CHAT_URL in
 dist/chat-link.js to connect the knowledge-base widget.
 
-Update (v3): dist/demo.html is the clean chat-aligned demo (Partner Program Manager +
-Partner Manager, multiple sign-in options, Add to Salesforce). Open /demo.html.
+Update (v3): dist/index.html (formerly demo.html) is the clean chat-aligned demo (Partner Program Manager +
+Partner Manager, multiple sign-in options, Add to Salesforce). It is now the home page at /.
+The earlier portal moved to /portal.html (manager side: /manager.html).
 Set CHAT_URLS at the top of its script to connect the Knolli copilots.

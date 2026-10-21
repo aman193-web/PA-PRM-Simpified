@@ -64,7 +64,7 @@ test('converted leads show as Converted to the manager once the registration is 
 // A partner manager who signed in on the shared sign-in screen.
 const managerApp=saved=>environment(saved,'',['sales-workflow.js','user-access.js','manager.js'],{session:{'prm-manager-session':'1'}});
 test('manager signs in, reviews the queue, and approves with one click',()=>{
- const out=environment(undefined,'',['sales-workflow.js','user-access.js','manager.js']);assert.equal(out.location.href,'index.html#manager','signed-out visits go to the shared sign-in');const m=managerApp();
+ const out=environment(undefined,'',['sales-workflow.js','user-access.js','manager.js']);assert.equal(out.location.href,'portal.html#manager','signed-out visits go to the shared sign-in');const m=managerApp();
  assert.match(m.html(),/<h1>Good (morning|afternoon|evening), Riley\.<\/h1>/);assert.match(m.html(),/Decision queue/);assert.match(m.html(),/nav-badge/);assert.match(m.html(),/Live sync/);
  m.click({page:'queue'});assert.match(m.html(),/<h1>Lead reviews<\/h1>/);assert.match(m.html(),/Meridian Logistics/);assert.match(m.html(),/No duplicates/);
  m.click({open:'00Q-L102'});assert.match(m.overlay(),/Recommended: Approve/);assert.match(m.overlay(),/No duplicate records/);assert.match(m.overlay(),/In program territory · North America/);
@@ -215,7 +215,7 @@ test('all partner leads filter by stage group and partner; search finds partners
 test('manager pages do not link to the partner portal; sign-out returns to the first screen',()=>{
  const m=managerApp();
  for(const page of ['overview','queue','registrations','distribution','leads','opportunities','partners']){m.click({page});assert.doesNotMatch(m.html(),/index\.html|partner portal/i);}
- m.click({action:'signout'});assert.equal(m.location.href,'index.html');assert.equal(m.context.sessionStorage.getItem('prm-manager-session'),null);
+ m.click({action:'signout'});assert.equal(m.location.href,'portal.html');assert.equal(m.context.sessionStorage.getItem('prm-manager-session'),null);
 });
 
 test('overview is action first: up next, quick decisions, skip, and progress through the day',()=>{

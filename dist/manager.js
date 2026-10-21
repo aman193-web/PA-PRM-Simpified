@@ -384,7 +384,7 @@ function sidebar(){
 function render(){
  const app=document.getElementById('app');
  // Partner Account Managers sign in on the shared sign-in screen, then come back here.
- if(!signedIn){app.innerHTML='<main class="mgr-redirect" aria-live="polite">Opening sign-in…</main>';location.href='index.html#manager';return;}
+ if(!signedIn){app.innerHTML='<main class="mgr-redirect" aria-live="polite">Opening sign-in…</main>';location.href='portal.html#manager';return;}
  if(!views[page])page='overview';
  history.replaceState(null,'','#'+page);
  const overview=page==='overview',enter=overview&&entrance,before=overview&&!enter?readCounts():null;entrance=false;
@@ -569,7 +569,7 @@ document.addEventListener('click',e=>{
  if(action==='add-user')return userForm();
  if(action==='edit-user')return userForm(data.userId);
  // Signing out returns to the first screen, where either portal can be chosen.
- if(action==='signout'){signedIn=false;try{sessionStorage.removeItem(SESSION);}catch{}closeOverlay();render();location.href='index.html';return;}
+ if(action==='signout'){signedIn=false;try{sessionStorage.removeItem(SESSION);}catch{}closeOverlay();render();location.href='portal.html';return;}
  if(action==='close')return closeOverlay();
  if(action==='assign')return assignForm(data.assignTo||undefined);
  if(action==='search')return searchDialog();
