@@ -40,11 +40,11 @@ a{color:var(--brand)}
 .sf-cta:hover{background:#0089bf;color:#fff}
 @keyframes sfpulse{0%{box-shadow:0 0 0 0 #00a1e073}70%{box-shadow:0 0 0 10px #00a1e000}100%{box-shadow:0 0 0 0 #00a1e000}}
 .sf-hero{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:18px 20px;margin-bottom:22px;border-radius:var(--radius);background:linear-gradient(120deg,#032d60,#0b5cab 60%,#00a1e0);color:#fff;box-shadow:var(--shadow)}
-.sf-hero-ic{flex:0 0 48px;height:48px;border-radius:12px;display:grid;place-items:center;background:#ffffff26}.sf-hero-ic svg{width:30px;height:30px}
+.sf-hero-ic{flex:0 0 48px;height:48px;border-radius:12px;display:grid;place-items:center;background:#fff}.sf-hero-ic .sfi{width:38px;height:27px;flex-basis:38px}
 .sf-hero-copy{flex:1 1 260px;min-width:0}.sf-hero-copy b{display:block;font-size:16.5px}.sf-hero-copy span{font-size:13.5px;color:#d6eaff}
-.sf-hero .sf-cta{background:#fff;color:#0b5cab;border-color:#fff;animation:none}.sf-hero .sf-cta svg path{fill:#00a1e0}
+.sf-hero .sf-cta{background:#fff;color:#0b5cab;border-color:#fff;animation:none}.sf-hero .sf-cta .sfw{padding:0;background:none}
 .sendchip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
-.src{display:inline-flex;align-items:center;gap:4px}.src .sfi{width:15px;height:15px;flex-basis:15px}
+.src{display:inline-flex;align-items:center;gap:5px;vertical-align:-3px}.src .sfi{width:20px;height:14px;flex-basis:20px}
 .bellwrap{position:relative}
 .bell .bdot{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--accent);color:#2a1a00;font-size:11px;font-weight:700;line-height:18px;text-align:center}
 .bell{position:relative}
@@ -62,9 +62,10 @@ a{color:var(--brand)}
 .msg .btn{white-space:normal;text-align:left}
 .modal.wide{width:min(640px,100%)}
 .sf{cursor:pointer}.sf:hover{border-color:var(--brand)}
-.sf-connect svg,.sfi{width:18px;height:18px;flex:0 0 18px}
-.sfbar{display:flex;align-items:center;gap:10px;padding:16px 22px;background:#00a1e0;color:#fff;font-weight:700;font-size:17px}
-.sfbar svg{width:30px;height:30px}
+.sfi{width:23px;height:16px;flex:0 0 23px;object-fit:contain;display:block}
+.sfw{box-sizing:content-box;padding:2px 3px;border-radius:5px;background:#fff}
+.sfbar{display:flex;align-items:center;padding:14px 22px;background:var(--surface-2);border-bottom:1px solid var(--border)}
+.sfbar img{width:58px;height:41px;object-fit:contain}
 .scopes{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
 .scopes li{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink)}
 .scopes svg{width:16px;height:16px;flex:0 0 16px;margin-top:3px;color:var(--ok)}
@@ -87,6 +88,7 @@ a{color:var(--brand)}
 
 /* ---------- buttons, pills ---------- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:38px;padding:8px 15px;border-radius:var(--ctl);font-weight:600;font-size:14px;white-space:nowrap;border:1px solid transparent;transition:background .15s,border-color .15s,color .15s}
+.btn>svg{width:16px;height:16px;flex:0 0 16px}
 .btn-primary{background:var(--brand);color:#fff}.btn-primary:hover{background:var(--brand-hover)}
 :root[data-theme="dark"] .btn-primary{color:#06121f}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn-primary{color:#06121f}}
@@ -148,7 +150,8 @@ a{color:var(--brand)}
 .role{display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;padding:18px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);margin-bottom:12px;transition:border-color .15s,box-shadow .15s}
 .role:hover{border-color:var(--brand);box-shadow:var(--shadow)}
 .role .ic{flex:0 0 42px;height:42px;border-radius:11px;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand)}
-.role.vendor .ic{background:var(--night);color:var(--accent)}
+.role .ic svg{width:22px;height:22px}
+.role.vendor .ic{background:var(--accent-soft);color:var(--accent-ink)}
 .role b{display:block;color:var(--ink);font-size:16px}
 .role small{display:block;color:var(--muted);font-size:13.5px;margin-top:2px}
 .back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13.5px;margin-bottom:18px;padding:0}
@@ -190,7 +193,9 @@ textarea.input{min-height:92px;resize:vertical}
 .nav a[aria-current="page"]{background:var(--brand-soft);color:var(--brand);font-weight:600}
 .nav svg{width:19px;height:19px;flex:0 0 19px}
 .nav .count{margin-left:auto;min-width:22px;padding:0 7px;border-radius:999px;background:var(--accent);color:#2a1a00;font-size:12px;font-weight:700;text-align:center}
-.side-foot{margin-top:auto;display:grid;gap:8px}
+.side-foot{margin-top:auto;display:grid;gap:8px;min-width:0}
+.side-foot .btn{justify-content:flex-start;white-space:normal;text-align:left;line-height:1.3;min-width:0}
+.mob-only{display:none}
 .me{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:var(--surface-2)}
 .me b{display:block;color:var(--ink);font-size:13.5px;line-height:1.2}
 .me small{color:var(--muted);font-size:12px}
@@ -323,7 +328,7 @@ h3.sec{font-size:13px;color:var(--muted);font-weight:600;margin:22px 0 8px}
 .tabbar{display:none}
 @media (max-width:900px){
  .auth{grid-template-columns:1fr}.auth-side{padding:28px 24px}.scene{display:none}.auth-points{grid-template-columns:1fr 1fr 1fr;margin-top:18px}.auth-points li{padding:10px}.auth-side h1{font-size:30px}
- .app{grid-template-columns:1fr}.side{display:none}
+ .app{grid-template-columns:1fr}.side{display:none}.top .mob-only{display:grid}
  .top{padding:10px 16px}.top .sf span,.top .sf-connect span{display:none}.top .sf{width:30px;height:30px;padding:0;justify-content:center}.top .sf-connect{padding:6px 9px}.top .mlogo{display:inline-flex}.top .crumb{display:none}
  .page{padding:22px 16px 150px}
  .stats{grid-template-columns:1fr 1fr}.stats .stat.hero{grid-column:1/-1}
@@ -488,8 +493,9 @@ function sendOpp(oppId,program,note){const o=db.opps.find(x=>x.id===oppId),p=pro
  toast(o.account+' sent to '+co(p.vendor).name+' · '+when(d.submittedAt)+'.');if(filter.my&&filter.my!=='all'&&oppState(o)!==filter.my)filter.my='all';if(view!=='mydeals')go('mydeals');else render();flash(o.id)}
 function submitDeal(v){const o={id:uid('o'),partner:myCo(),account:v.customer,site:v.site,contact:v.contact,email:v.email,product:v.product,amount:Number(v.value),close:v.close,need:v.need,stage:'Prospecting',source:'Manual',createdAt:new Date().toISOString()};db.opps.push(o);sendOpp(o.id,v.program,'')}
 /* ---------- Salesforce ---------- */
-const SFW='<svg viewBox="0 0 32 22" aria-hidden="true" class="sfi"><path fill="#fff" d="M13.3 2.4A5.6 5.6 0 0 1 17.4.6c2.1 0 3.9 1.2 4.9 2.9a6.7 6.7 0 0 1 2.8-.6 6.9 6.9 0 0 1 0 13.8c-.4 0-.8 0-1.3-.1a5 5 0 0 1-6.6 2.1 5.7 5.7 0 0 1-10.6-.3 5.2 5.2 0 0 1-1.1.1A5.3 5.3 0 0 1 2.9 9a6 6 0 0 1 10.4-6.6z"/></svg>';
-const SFI='<svg viewBox="0 0 32 22" aria-hidden="true" class="sfi"><path fill="#00A1E0" d="M13.3 2.4A5.6 5.6 0 0 1 17.4.6c2.1 0 3.9 1.2 4.9 2.9a6.7 6.7 0 0 1 2.8-.6 6.9 6.9 0 0 1 0 13.8c-.4 0-.8 0-1.3-.1a5 5 0 0 1-6.6 2.1 5.7 5.7 0 0 1-10.6-.3 5.2 5.2 0 0 1-1.1.1A5.3 5.3 0 0 1 2.9 9a6 6 0 0 1 10.4-6.6z"/></svg>';
+const SF_LOGO='assets/salesforce.png';
+const SFI=`<img src="${SF_LOGO}" alt="" class="sfi">`;
+const SFW=`<img src="${SF_LOGO}" alt="" class="sfi sfw">`;
 const crm=()=>db.crm[myCo()]||{};
 const sfConnected=()=>!!crm().connected;
 const orgHost=env=>(myCo()==='cc'?'codeconductor':'redblink')+(env==='Sandbox'?'--sandbox':'')+'.my.salesforce.com';
@@ -497,7 +503,7 @@ let sfFlow={step:'intro',env:'Production',after:null};
 function sfConnect(after){sfFlow={step:'intro',env:'Production',after:after||null};sfModal()}
 function sfModal(){const vendor=session.role==='ppm',u=me();
  if(sfFlow.step==='intro')return openModal(`<header><h2>Connect Salesforce</h2><p>${vendor?'Accepted partner deals go straight into your Salesforce as opportunities.':'Bring in your open opportunities and send them to vendors without retyping.'}</p></header><div class="mbody"><div class="field"><span style="font-size:13px;font-weight:600;color:var(--ink)">Environment</span><div class="envs">${['Production','Sandbox'].map(e=>`<label><input type="radio" name="sfenv" value="${e}" ${sfFlow.env===e?'checked':''} data-act="sf-env"><span><b>${e}</b>${e==='Production'?'Your live Salesforce org':'A test copy of your org'}</span></label>`).join('')}</div></div><div class="callout info" style="margin-top:4px">You’ll sign in on Salesforce and approve access. You can disconnect any time.</div></div><footer class="dfoot"><button class="btn btn-line" data-act="close">Cancel</button><button class="btn btn-sf" data-act="sf-login">Log in to Salesforce</button></footer>`);
- if(sfFlow.step==='consent')return openModal(`<div class="sfbar">${SFI.replace('class="sfi"','').replace('#00A1E0','#fff')}salesforce</div><header><h2>Allow access?</h2><p>Signed in as <b>${esc(u.email)}</b> on ${esc(orgHost(sfFlow.env))}</p></header><div class="mbody"><p style="margin:0;color:var(--ink);font-size:14px">PartnerAssistant PRM is asking to:</p><ul class="scopes">${(vendor?['Create and update opportunities','Read accounts and contacts','Stay connected so deals sync automatically']:['Read your opportunities','Read accounts and contacts','Stay connected so updates sync automatically']).map(x=>`<li>${ic('check')}${x}</li>`).join('')}</ul></div><footer class="dfoot"><button class="btn btn-line" data-act="sf-deny">Deny</button><button class="btn btn-sf" data-act="sf-allow">Allow</button></footer>`);
+ if(sfFlow.step==='consent')return openModal(`<div class="sfbar"><img src="${SF_LOGO}" alt="Salesforce"></div><header><h2>Allow access?</h2><p>Signed in as <b>${esc(u.email)}</b> on ${esc(orgHost(sfFlow.env))}</p></header><div class="mbody"><p style="margin:0;color:var(--ink);font-size:14px">PartnerAssistant PRM is asking to:</p><ul class="scopes">${(vendor?['Create and update opportunities','Read accounts and contacts','Stay connected so deals sync automatically']:['Read your opportunities','Read accounts and contacts','Stay connected so updates sync automatically']).map(x=>`<li>${ic('check')}${x}</li>`).join('')}</ul></div><footer class="dfoot"><button class="btn btn-line" data-act="sf-deny">Deny</button><button class="btn btn-sf" data-act="sf-allow">Allow</button></footer>`);
  if(sfFlow.step==='wait')return openModal(`<div class="waiting" style="padding:40px 22px"><span class="spin"></span><h2 style="font-size:19px">Connecting to Salesforce…</h2><p style="margin:0;color:var(--muted)">${vendor?'Checking your opportunity fields.':'Reading your open opportunities.'}</p></div>`);
 }
 function sfAllow(){sfFlow.step='wait';sfModal();setTimeout(()=>{db.crm[myCo()]={connected:true,env:sfFlow.env,org:orgHost(sfFlow.env),user:me().email,at:new Date().toISOString()};save();const after=sfFlow.after;closeAll();render();toast('Salesforce connected: '+orgHost(sfFlow.env)+'.');if(after)setTimeout(after,250)},1200)}
@@ -590,7 +596,7 @@ function shell(content){
  const link=(id,label,icn,tab)=>`<a href="#${id}" data-act="nav" data-view="${id}" ${view===id?'aria-current="page"':''}>${ic(icn)}${tab?`<span>${esc(label==='Add a deal'?'Add deal':label.replace('Partnership requests','Requests').replace('Received deals','Deals').replace('My partners','Partners'))}</span>`:esc(label)}${cnt[id]?`<span class="count">${cnt[id]}</span>`:''}</a>`;
  return `<div class="app"><aside class="side">${LOGO}<div class="org"><span class="av ${vendor?'vendor':''}">${ini(c.name)}</span><span><b>${esc(c.name)}</b><small>${vendor?'Vendor workspace':'Partner workspace'}</small></span></div>
  <nav class="nav" aria-label="Main">${nav.map(n=>link(n[0],n[1],n[2])).join('')}</nav>
- <div class="side-foot"><button class="btn btn-quiet" data-act="switch" style="justify-content:flex-start">${ic('swap')}View as ${vendor?'Partner Manager':'Partner Program Manager'}</button>
+ <div class="side-foot"><button class="btn btn-quiet" data-act="switch">${ic('swap')}View as ${vendor?'Partner Manager':'Partner Program Manager'}</button>
  <div class="me"><span class="av ${vendor?'vendor':''}">${ini(u.name)}</span><span style="flex:1;min-width:0"><b>${esc(u.name)}</b><small>${esc(u.title)}</small></span><button class="iconbtn" data-act="signout" title="Sign out" aria-label="Sign out">${ic('out')}</button></div></div></aside>
  <div class="main"><header class="top"><span class="mlogo">${LOGO}</span><span class="crumb">${esc(c.name)} / <b>${esc(title)}</b></span><span class="grow"></span>
  ${sfChip()}
