@@ -26,3 +26,6 @@ Update (v3): dist/index.html (formerly demo.html) is the clean chat-aligned demo
 Partner Manager, multiple sign-in options, Add to Salesforce). It is now the home page at /.
 The earlier portal moved to /portal.html (manager side: /manager.html).
 Set CHAT_URLS at the top of its script to connect the Knolli copilots.
+
+Home page (index.html): the demo data resets to the sample data on every refresh and
+sign-out. Theme and list/card choices are remembered.

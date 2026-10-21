@@ -493,10 +493,13 @@ function seed(){
   {at:h(24*3),vendor:'vx',partner:'rb',text:'RedBlink Technologies sent Meridian Logistics to Vertex Software.'},
   {at:h(24*11),vendor:'cc',partner:'rb',text:'Meridian Logistics was added to Salesforce.'}]};
 }
-let db;try{db=JSON.parse(localStorage.getItem(KEY)||'null')}catch{db=null}if(!db||!db.companies)db=seed();
-if(!db.crm)db.crm={};if(!db.seen)db.seen={};if(!db.opps)db.opps=[];if(!db.sfOpps)db.sfOpps=seed().sfOpps;
+/* The demo starts from the sample data on every page load and sign-out. The copy in
+   localStorage only keeps two open tabs (e.g. one per role) in sync while they're open. */
+let db=seed();
 let session=null;try{session=JSON.parse(localStorage.getItem(SKEY)||'null')}catch{}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch{}};
+save();
+function resetDemo(){db=seed();filter={};save()}
 const saveSession=()=>{try{session?localStorage.setItem(SKEY,JSON.stringify(session)):localStorage.removeItem(SKEY)}catch{}};
 window.addEventListener('storage',e=>{if(e.key===KEY){try{db=JSON.parse(e.newValue)||seed()}catch{}render()}});
 
@@ -881,7 +884,7 @@ document.addEventListener('click',e=>{
  if(a==='auth-tab'){auth.tab=t.dataset.tab;render();return}
  if(a==='idp')return finish(t.dataset.idp);
  if(a==='finish')return finish(t.dataset.method);
- if(a==='signout'){session=null;saveSession();toggleChat(false);chatLog={};render();toast('Signed out.');return}
+ if(a==='signout'){session=null;saveSession();toggleChat(false);chatLog={};resetDemo();render();toast('Signed out. The demo data was reset.');return}
  if(a==='switch'){const role=session.role==='ppm'?'pm':'ppm';session={role,method:session.method};saveSession();chatLog={};toggleChat(false);view='home';history.replaceState(null,'','#home');render();toast('Now viewing as '+USERS[role].title+' ('+co(USERS[role].company).name+').');return}
  if(a==='theme'){const r=document.documentElement;if(!still()){r.classList.add('theming');setTimeout(()=>r.classList.remove('theming'),400)}const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('pa-prm-theme',r.dataset.theme)}catch{}return}
  if(a==='filter'){filter[t.dataset.key]=t.dataset.val;flipRender();return}
