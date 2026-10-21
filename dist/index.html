@@ -334,6 +334,27 @@ h3.sec{font-size:13px;color:var(--muted);font-weight:600;margin:22px 0 8px}
 .composer{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border)}
 .composer input{flex:1}
 
+/* ---------- motion: hover and press ---------- */
+.stat,.pcard,.role,.idp,.rows.as-cards .row{transition:transform .22s ease,box-shadow .22s ease,border-color .15s}
+a.stat:hover,.pcard:hover,.role:hover,.rows.as-cards .row:hover{transform:translateY(-2px);box-shadow:0 2px 4px #172b450a,0 14px 30px #172b4517}
+.idp:hover{transform:translateY(-1px)}
+.btn,.iconbtn,.idp,.seg button,.chips button{transition:background .15s,border-color .15s,color .15s,transform .12s ease,box-shadow .15s}
+.btn:active,.iconbtn:active,.idp:active,.seg button:active,.chips button:active,.role:active{transform:scale(.97)}
+.btn-primary:hover,.btn-sf:hover{box-shadow:0 4px 14px color-mix(in srgb,var(--brand) 30%,transparent)}
+.rows:not(.as-cards) .row{transition:background .15s}.rows:not(.as-cards) .row:hover{background:var(--surface-2)}
+.rmain .av,.role .ic{transition:transform .25s ease}.row:hover .rmain .av{transform:scale(1.06)}.role:hover .ic{transform:scale(1.07) rotate(-4deg)}
+.nav a svg,.tabbar a svg{transition:transform .2s ease}.nav a:hover svg{transform:translateX(2px)}.tabbar a:active svg{transform:scale(.9)}
+.iconbtn svg{transition:transform .25s ease}.iconbtn[data-act="theme"]:hover svg{transform:rotate(-18deg)}.bell:hover svg{transform:rotate(10deg)}
+.ask{transition:background .15s,transform .2s ease,box-shadow .2s}.ask:hover{transform:translateY(-2px);box-shadow:0 12px 30px #102f5755}
+.sf-hero{background-size:180% 100%;animation:sfdrift 9s ease-in-out infinite alternate}
+@keyframes sfdrift{to{background-position:100% 0}}
+@property --fy{syntax:'<length>';inherits:false;initial-value:0px}
+.pane{transform:translateZ(var(--z)) translateY(var(--fy));animation:pfloat 4.4s ease-in-out infinite alternate}.pane:hover{transform:translateZ(calc(var(--z) + 28px)) translateY(var(--fy))}
+.p2{animation-delay:-1.5s}.p3{animation-delay:-3s}
+@keyframes pfloat{to{--fy:-7px}}
+.entering *{transition:none!important}
+html.theming *,html.theming *::before{transition:background-color .35s ease,border-color .35s ease,color .35s ease!important}
+
 /* ---------- mobile ---------- */
 .tabbar{display:none}
 @media (max-width:900px){
@@ -378,6 +399,8 @@ h3.sec{font-size:13px;color:var(--muted);font-weight:600;margin:22px 0 8px}
 <div class="scrim" id="drawer" hidden></div>
 <div class="scrim center" id="modal" hidden></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="vendor/gsap-3.13.0.min.js"></script>
+<script src="vendor/Flip-3.13.0.min.js"></script>
 <script>
 (function(){
 'use strict';
@@ -557,14 +580,17 @@ const unread=()=>{const seen=db.seen[session.role]||'';return notes().filter(a=>
 function togglePop(){const pop=$('#pop');if(!pop)return;if(!pop.hidden){pop.hidden=true;return}
  const list=notes().slice(0,8),seen=db.seen[session.role]||'';
  pop.innerHTML=`<header><b>Notifications</b><small>${list.length?'Latest first':''}</small></header>${list.length?`<ul>${list.map(a=>`<li class="${a.at>seen?'new':''}"><span class="dot"></span><span>${esc(a.text)}<time>${when(a.at)}</time></span></li>`).join('')}</ul>`:'<div class="empty">You’re all caught up.</div>'}`;
- pop.hidden=false;db.seen[session.role]=new Date().toISOString();save();const b=document.querySelector('.bell .bdot');if(b)b.remove()}
+ pop.hidden=false;if(moving()){G.from(pop,{autoAlpha:0,y:-8,duration:.25,ease:'power2.out',clearProps:'opacity,visibility,transform'});G.from(pop.querySelectorAll('li'),{autoAlpha:0,x:-6,duration:.25,stagger:.03,delay:.06,clearProps:'opacity,visibility,transform'})}
+ db.seen[session.role]=new Date().toISOString();save();const b=document.querySelector('.bell .bdot');if(b)b.remove()}
 document.addEventListener('click',e=>{const pop=$('#pop');if(pop&&!pop.hidden&&!e.target.closest('#pop,[data-act="bell"]'))pop.hidden=true});
 
 /* ---------- toast, overlays ---------- */
 let toastT;function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),4200)}
 let lastFocus;
-function openDrawer(html){lastFocus=document.activeElement;const s=$('#drawer');s.innerHTML=`<aside class="drawer" role="dialog" aria-modal="true">${html}</aside>`;s.hidden=false;s.querySelector('button,a,input')?.focus()}
-function openModal(html,cls=''){lastFocus=document.activeElement;const s=$('#modal');s.innerHTML=`<div class="modal ${cls}" role="dialog" aria-modal="true">${html}</div>`;s.hidden=false;s.querySelector('textarea,select,input,button')?.focus()}
+function openDrawer(html){lastFocus=document.activeElement;const s=$('#drawer');s.innerHTML=`<aside class="drawer" role="dialog" aria-modal="true">${html}</aside>`;s.hidden=false;s.querySelector('button,a,input')?.focus();
+ if(moving()){G.from(s,{autoAlpha:0,duration:.2,clearProps:'opacity,visibility'});G.from(s.firstChild,{x:48,duration:.42,ease:'power3.out',clearProps:'transform'});G.from(s.querySelectorAll('.dbody > *'),{autoAlpha:0,y:8,duration:.3,stagger:.03,delay:.12,clearProps:'opacity,visibility,transform'})}}
+function openModal(html,cls=''){lastFocus=document.activeElement;const s=$('#modal'),was=!s.hidden;s.innerHTML=`<div class="modal ${cls}" role="dialog" aria-modal="true">${html}</div>`;s.hidden=false;s.querySelector('textarea,select,input,button')?.focus();
+ if(moving()){if(!was)G.from(s,{autoAlpha:0,duration:.2,clearProps:'opacity,visibility'});G.from(s.firstChild,{autoAlpha:0,y:12,scale:.97,duration:.32,ease:'power3.out',clearProps:'opacity,visibility,transform'})}}
 function closeAll(){['#drawer','#modal'].forEach(q=>{const s=$(q);s.hidden=true;s.innerHTML=''});lastFocus?.focus?.()}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#modal').hidden||!$('#drawer').hidden)closeAll();else if(!chatEl.hidden)toggleChat(false)}});
 ['#drawer','#modal'].forEach(q=>$(q).addEventListener('click',e=>{if(e.target===e.currentTarget)closeAll()}));
@@ -777,17 +803,55 @@ function startScene(){const sc=$('#scene'),st=$('#stage');if(!sc)return;
  paintScene();sceneT=setInterval(()=>{sceneStep++;if(sceneStep>2){sceneStep=0;sceneEx=(sceneEx+1)%EXAMPLES.length}paintScene()},1700)}
 function stopScene(){clearInterval(sceneT);sceneT=null}
 
+/* ---------- motion (GSAP; skipped when missing or reduced motion is on) ---------- */
+const G=window.gsap,FL=window.Flip;if(G&&FL)G.registerPlugin(FL);
+const moving=()=>!!G&&!still();
+const IN={autoAlpha:0,y:14,duration:.5,ease:'power3.out',clearProps:'opacity,visibility,transform'};
+let lastScreen='';
+/* CSS hover transitions on transform fight GSAP's per-frame updates, so pause them while things move in */
+function quiet(sec){const r=$('#root');r.classList.add('entering');G.delayedCall(sec,()=>r.classList.remove('entering'))}
+function countUp(el){const m=el.textContent.trim().match(/^(\$?)([\d.,]+)([KMB]?)$/);if(!m)return;
+ const end=parseFloat(m[2].replace(/,/g,'')),dec=(m[2].split('.')[1]||'').length,o={v:0};
+ G.to(o,{v:end,duration:.9,ease:'power2.out',delay:.15,onUpdate:()=>{el.textContent=m[1]+o.v.toFixed(dec)+m[3]},onComplete:()=>{el.textContent=m[0]}})}
+function animateScreen(){
+ const key=session?session.role+':'+view:'auth:'+auth.step,prev=lastScreen;lastScreen=key;
+ if(!moving()||key===prev)return;
+ if(!session){
+  const card=G.utils.toArray('.auth-card > *');
+  if(prev.startsWith('auth:')){quiet(.8);return void G.from(card,{...IN,y:10,duration:.35,stagger:.04})}
+  quiet(1.6);
+  G.timeline().from('.auth-top, .auth-copy h1, .auth-copy p',{...IN,stagger:.08})
+   .from('.pane',{autoAlpha:0,duration:.6,ease:'power2.out',stagger:.15,clearProps:'opacity,visibility'},'-=.3')
+   .from('.auth-points li',{...IN,stagger:.06},'-=.5')
+   .from(card,{...IN,stagger:.06},.15);
+  return}
+ quiet(1.2);
+ const firstIn=!prev.startsWith(session.role+':');
+ if(firstIn){G.from('.side .logo-mark, .side .org, .nav a, .side-foot > *',{...IN,x:-10,y:0,duration:.4,stagger:.035});
+  G.from('.nav .count, .bell .bdot, .tabbar .count',{scale:0,duration:.45,ease:'back.out(3)',delay:.35,stagger:.06,clearProps:'transform'});
+  if(document.querySelector('.bell .bdot'))G.fromTo('.bell svg',{rotate:0},{keyframes:{rotate:[0,-14,11,-7,4,0]},duration:.9,delay:.7,transformOrigin:'50% 10%',clearProps:'transform'})}
+ G.from('#page > .ph, #page > .sf-hero, #page .stat, #page > section, #page > .callout, #page > .two > section',{...IN,stagger:.06});
+ G.from('#page .row, #page .pcard',{...IN,y:10,duration:.4,stagger:.03,delay:.18});
+ document.querySelectorAll('#page .stat strong').forEach(countUp);
+}
+function popIn(el,from={}){if(el&&moving())G.from(el,{autoAlpha:0,y:8,duration:.3,ease:'power3.out',clearProps:'opacity,visibility,transform',...from})}
+const tagFlip=()=>document.querySelectorAll('#page [data-row]').forEach(e=>{e.dataset.flipId=e.dataset.row});
+function flipRender(){if(!moving()||!FL)return render();
+ const st=FL.getState('#page [data-flip-id]');render();quiet(.8);
+ FL.from(st,{targets:'#page [data-flip-id]',duration:.45,ease:'power2.inOut',stagger:.015,
+  onEnter:els=>G.fromTo(els,{autoAlpha:0,y:10},{autoAlpha:1,y:0,duration:.35,stagger:.03,clearProps:'opacity,visibility,transform'})})}
+
 /* ---------- render ---------- */
 let prefill=null;
 function render(){
  document.body.classList.toggle('signed',!!session);
- if(!session){$('#root').innerHTML=authView();askBtn.hidden=true;chatEl.hidden=true;startScene();return}
+ if(!session){$('#root').innerHTML=authView();askBtn.hidden=true;chatEl.hidden=true;startScene();animateScreen();return}
  stopScene();
  if(!NAV[session.role].some(n=>n[0]===view))view='home';
  const pages={ppm:{home:vHome,requests:vRequests,received:vReceived,partners:vPartners,programs:vPrograms},pm:{home:pHome,submit:()=>pSubmit(prefill||{}),mydeals:pDeals,vendors:pVendors}};
  $('#root').innerHTML=shell(pages[session.role][view]());prefill=null;
  document.title=(NAV[session.role].find(n=>n[0]===view)?.[1]||'Overview')+' · PartnerAssistant PRM';
- askBtn.hidden=false;setupChat();
+ askBtn.hidden=false;setupChat();tagFlip();animateScreen();
 }
 
 /* ---------- events ---------- */
@@ -802,9 +866,9 @@ document.addEventListener('click',e=>{
  if(a==='finish')return finish(t.dataset.method);
  if(a==='signout'){session=null;saveSession();toggleChat(false);chatLog={};render();toast('Signed out.');return}
  if(a==='switch'){const role=session.role==='ppm'?'pm':'ppm';session={role,method:session.method};saveSession();chatLog={};toggleChat(false);view='home';history.replaceState(null,'','#home');render();toast('Now viewing as '+USERS[role].title+' ('+co(USERS[role].company).name+').');return}
- if(a==='theme'){const r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('pa-prm-theme',r.dataset.theme)}catch{}return}
- if(a==='filter'){filter[t.dataset.key]=t.dataset.val;render();return}
- if(a==='layout'){layouts[t.dataset.key]=t.dataset.val;try{localStorage.setItem(LKEY,JSON.stringify(layouts))}catch{}render();return}
+ if(a==='theme'){const r=document.documentElement;if(!still()){r.classList.add('theming');setTimeout(()=>r.classList.remove('theming'),400)}constdark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('pa-prm-theme',r.dataset.theme)}catch{}return}
+ if(a==='filter'){filter[t.dataset.key]=t.dataset.val;flipRender();return}
+ if(a==='layout'){layouts[t.dataset.key]=t.dataset.val;try{localStorage.setItem(LKEY,JSON.stringify(layouts))}catch{}flipRender();return}
  if(a==='close')return closeAll();
  if(a==='open-req')return reqDrawer(id);
  if(a==='open-deal')return dealDrawer(id);
@@ -855,7 +919,8 @@ const askBtn=document.createElement('button');askBtn.className='ask';askBtn.type
 const chatEl=document.createElement('section');chatEl.id='chat';chatEl.className='chat';chatEl.hidden=true;chatEl.setAttribute('aria-label','Copilot');
 document.body.append(chatEl,askBtn);
 askBtn.onclick=()=>toggleChat(chatEl.hidden);
-function toggleChat(open){chatEl.hidden=!open;document.body.classList.toggle('chat-open',open);askBtn.setAttribute('aria-expanded',String(open));if(open)setTimeout(()=>(chatEl.querySelector('#chat-in')||chatEl.querySelector('iframe'))?.focus(),30)}
+function toggleChat(open){chatEl.hidden=!open;document.body.classList.toggle('chat-open',open);askBtn.setAttribute('aria-expanded',String(open));
+ if(open&&moving()){const phone=matchMedia('(max-width:900px)').matches;G.from(chatEl,phone?{y:40,autoAlpha:0,duration:.35,ease:'power3.out',clearProps:'opacity,visibility,transform'}:{y:16,scale:.96,autoAlpha:0,transformOrigin:'100% 100%',duration:.32,ease:'power3.out',clearProps:'opacity,visibility,transform'});G.from(chatEl.querySelectorAll('.chips button'),{autoAlpha:0,y:6,duration:.25,stagger:.04,delay:.15,clearProps:'opacity,visibility,transform'})}if(open)setTimeout(()=>(chatEl.querySelector('#chat-in')||chatEl.querySelector('iframe'))?.focus(),30)}
 let chatLog={},chatRole=null;
 const CHIPS={ppm:['Show my partners','Which partners applied to my programs?','Which partners are under review?','Show received deals','Add the Helios Freight deal to Salesforce'],pm:['Show my partner companies','Import my Salesforce deals','Where did I send my deals?','Submit a $50K deal with Chevron closing in March','Which programs can I join?']};
 function setupChat(){const role=session.role;if(chatRole===role&&chatEl.innerHTML)return;chatRole=role;
@@ -864,7 +929,8 @@ function setupChat(){const role=session.role;if(chatRole===role&&chatEl.innerHTM
  ${url?`<iframe src="${esc(url)}" title="${esc(title)}" allow="clipboard-write; microphone"></iframe>`:`<div class="msgs" id="msgs" aria-live="polite"></div><div class="chips">${CHIPS[role].map(q=>`<button type="button" data-act="chat-chip" data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div><form class="composer" id="chat-form"><label class="sr" for="chat-in">Message</label><input class="input" id="chat-in" autocomplete="off" placeholder="Ask about partners, deals, or programs"><button class="btn btn-primary" type="submit">Send</button></form>`}`;
  chatEl.querySelector('[data-chat-close]').onclick=()=>{toggleChat(false);askBtn.focus()};
  if(!url){chatLog[role]=chatLog[role]||[{who:'bot',html:`Hi ${esc(me().first)}. Ask me anything about your ${role==='ppm'?'partners and deals':'vendors and deals'}, or tap a suggestion.`}];paintChat()}}
-function paintChat(){const m=$('#msgs');if(!m)return;m.innerHTML=(chatLog[session.role]||[]).map(x=>`<div class="msg ${x.who}">${x.html}</div>`).join('');m.scrollTop=m.scrollHeight}
+function paintChat(){const m=$('#msgs');if(!m)return;m.innerHTML=(chatLog[session.role]||[]).map(x=>`<div class="msg ${x.who}">${x.html}</div>`).join('');m.scrollTop=m.scrollHeight;
+ const last=m.lastElementChild;if(last)popIn(last,{y:10,scale:.97,transformOrigin:last.classList.contains('me')?'100% 100%':'0 100%'})}
 function say(who,html){(chatLog[session.role]=chatLog[session.role]||[]).push({who,html});paintChat()}
 const li=items=>`<ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul>`;
 const goBtn=(label,v,pre)=>`<button class="btn btn-line btn-sm" data-act="chat-go" data-view="${v}" ${pre?`data-prefill='${esc(JSON.stringify(pre))}'`:''}>${label}</button>`;
