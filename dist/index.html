@@ -120,10 +120,10 @@ a{color:var(--brand)}
 .auth-side>*{position:relative}
 .auth-side .glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(600px 380px at 85% 70%,#1f6fe055,transparent 70%),radial-gradient(420px 300px at 10% 10%,#ffb35914,transparent 70%),radial-gradient(#ffffff10 1px,transparent 1px) 0 0/22px 22px}
 .auth-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.auth-tag{font-size:12.5px;font-weight:600;color:#a9bfdc;padding:4px 10px;border:1px solid #ffffff26;border-radius:999px}
+.auth-tag{white-space:nowrap;font-size:12.5px;font-weight:600;color:#a9bfdc;padding:4px 10px;border:1px solid #ffffff26;border-radius:999px}
 .auth-copy h1{max-width:17ch;font-size:clamp(28px,3vw,40px)}
 .scene{perspective:1400px;height:420px;margin:18px 0 6px;touch-action:none}
-.stage{position:relative;width:470px;max-width:100%;height:100%;transform-style:preserve-3d;transform:scale(var(--sc,1)) rotateX(calc(20deg + var(--ry,0deg))) rotateY(calc(-24deg + var(--rx,0deg)));transition:transform .3s ease-out}
+.stage{position:relative;width:470px;max-width:100%;height:100%;transform-style:preserve-3d;transform:scale(var(--sc,1)) rotateX(calc(var(--tx,20deg) + var(--ry,0deg))) rotateY(calc(var(--ty,-24deg) + var(--rx,0deg)));transition:transform .3s ease-out}
 .pane{--z:0px;position:absolute;width:236px;padding:14px 16px;border-radius:14px;background:linear-gradient(155deg,#2a5288f2,#163762f5);border:1px solid #ffffff2b;box-shadow:0 24px 44px #00000059;color:#dfe8f6;backdrop-filter:blur(8px);transform:translateZ(var(--z));transition:transform .35s ease,border-color .35s,box-shadow .35s;cursor:default}
 .pane:hover{transform:translateZ(calc(var(--z) + 28px))}
 .p1{left:0;top:0}.p2{left:110px;top:142px;--z:40px}.p3{left:220px;top:284px;--z:80px}
@@ -338,9 +338,9 @@ h3.sec{font-size:13px;color:var(--muted);font-weight:600;margin:22px 0 8px}
 .tabbar{display:none}
 @media (max-width:900px){
  .auth{grid-template-columns:1fr}.auth-side{padding:24px 20px 8px}.auth-side h1{font-size:27px;margin-bottom:10px}.auth-copy{margin-top:18px}.auth-side p{font-size:14px}
- .scene{height:206px;margin:14px 0 0;touch-action:pan-y}.auth-points{display:none}
- .stage{--sc:.5;transform-origin:50% 0;width:470px;max-width:none;height:420px;left:50%;margin-left:-236px}
- .pane{width:236px}.p2{left:110px}.p3{left:220px}
+ .scene{height:94px;margin:18px 0 10px;touch-action:pan-y}.auth-points{display:none}
+ .stage{--sc:.5;--tx:14deg;--ty:-16deg;transform-origin:50% 0;width:680px;max-width:none;height:180px;left:50%;margin-left:-350px}
+ .pane{width:220px}.p1{left:0;top:0}.p2{left:230px;top:12px}.p3{left:460px;top:24px}
  .auth-main{padding:24px 20px 32px}.auth-card>p{margin-bottom:18px}
  .chat{inset:0;width:100%;height:100%;height:100dvh;border:0;border-radius:0;z-index:58;padding-bottom:env(safe-area-inset-bottom,0px)}
  .chat header{padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px}
@@ -364,6 +364,8 @@ h3.sec{font-size:13px;color:var(--muted);font-weight:600;margin:22px 0 8px}
  .ask{bottom:calc(78px + env(safe-area-inset-bottom,0px));right:14px;padding:13px}.ask span{display:none}
 }
 @media (max-width:400px){
+ .stage{--sc:.46}
+ @media (max-width:350px){.stage{--sc:.4}.scene{height:80px}.auth-tag{font-size:11.5px;padding:3px 8px}}
  .top{gap:6px;padding:10px 12px}.top .iconbtn{width:34px;height:34px}.top .sf-connect{padding:5px 7px}.top .sf{width:28px;height:28px}
  .top .mlogo .logo-mark{font-size:17px;gap:6px}.top .mlogo svg{width:22px;height:22px}
  .page{padding-left:12px;padding-right:12px}
