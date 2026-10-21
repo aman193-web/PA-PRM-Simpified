@@ -232,6 +232,15 @@ a.stat:hover{border-color:var(--brand)}
 .seg em{font-style:normal;color:var(--muted);font-weight:500;margin-left:4px}
 .row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:14px;padding:14px 20px;border-top:1px solid var(--border)}
 .row:first-child{border-top:0}
+.card-acts{display:flex;align-items:center;gap:8px}
+.vt button{display:grid;place-items:center;padding:5px 8px}.vt svg{width:16px;height:16px}
+.rows.as-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;padding:16px 20px 20px}
+.rows.as-cards .row{grid-template-columns:minmax(0,1fr);align-content:space-between;gap:14px;padding:16px;border:1px solid var(--border);border-radius:12px;background:var(--surface);transition:border-color .15s,box-shadow .15s}
+.rows.as-cards .row:hover{border-color:var(--border-strong);box-shadow:var(--shadow)}
+.rows.as-cards .rmain{align-items:flex-start}
+.rows.as-cards .ract{justify-content:flex-start;padding-top:12px;border-top:1px solid var(--border)}
+.rows.as-cards .amt{flex:1 0 100%;margin:0;font-size:16px}
+.rows.as-cards .ract .btn{flex:1 1 auto}
 .row.hl{animation:hl 2.2s ease-out}
 @keyframes hl{0%{background:var(--accent-soft)}100%{background:transparent}}
 .rmain{display:flex;align-items:center;gap:12px;min-width:0;text-align:left;padding:0}
@@ -377,7 +386,9 @@ const I={
  back:'<path d="M15 18 9 12l6-6"/>',
  moon:'<path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/>',
  bell:'<path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
- send:'<path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/>'
+ send:'<path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/>',
+ list:'<path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
+ grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>'
 };
 const ic=(n,cls='')=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${cls?`class="${cls}"`:''}>${I[n]}</svg>`;
 const LOGO=`<span class="logo-mark"><svg viewBox="0 0 26 26" aria-hidden="true"><path d="M7 4 3 22M14 4l-4 18M21 4l-4 18" stroke="#3b8cf0" stroke-width="3" stroke-linecap="round"/></svg>PRM<i>.</i></span>`;
@@ -610,6 +621,12 @@ function shell(content){
 const pillFor=s=>({'Applied':'p-applied','Submitted':'p-submitted','Under review':'p-review','Accepted':'p-ok','In Salesforce':'p-ok','Declined':'p-bad'}[s]||'p-review');
 const pill=s=>`<span class="pill ${pillFor(s)}">${esc(s)}</span>`;
 const seg=(key,opts,cur)=>`<div class="seg" role="group">${opts.map(([v,l,n])=>`<button data-act="filter" data-key="${key}" data-val="${v}" aria-pressed="${cur===v}">${l}${n!=null?`<em>${n}</em>`:''}</button>`).join('')}</div>`;
+/* list or card layout, remembered per list */
+const LKEY='pa-prm-layout';
+let layouts={};try{layouts=JSON.parse(localStorage.getItem(LKEY)||'{}')||{}}catch{}
+const lay=k=>layouts[k]==='cards'?'cards':'list';
+const viewToggle=k=>`<div class="seg vt" role="group" aria-label="Layout">${[['list','List view','list'],['cards','Card view','grid']].map(([v,l,i])=>`<button data-act="layout" data-key="${k}" data-val="${v}" aria-pressed="${lay(k)===v}" title="${l}" aria-label="${l}">${ic(i)}</button>`).join('')}</div>`;
+const rows=(k,html)=>`<div class="rows${lay(k)==='cards'?' as-cards':''}">${html}</div>`;
 const greet=()=>{const h=new Date().getHours();return h<12?'Good morning':h<18?'Good afternoon':'Good evening'};
 
 /* ---------- rows ---------- */
@@ -637,16 +654,16 @@ function vHome(){const w=V.waiting(),nd=V.newDeals(),sf=V.deals().filter(d=>d.st
  <a class="stat" href="#received" data-act="nav" data-view="received"><span>Deals to review</span><strong>${nd.length}</strong><small>${short(nd.reduce((n,d)=>n+d.value,0))} submitted by partners</small></a>
  <div class="stat hero"><span>Partner deals in Salesforce</span><strong>${short(sf.reduce((n,d)=>n+d.value,0))}</strong><small>${sf.length} opportunities from ${V.partners().length} partners</small></div></div>
  ${sfBanner()}
- <div class="two"><section class="card"><div class="card-h"><div><h2>Needs you</h2><p>Oldest first. Decide here, or open one for details.</p></div></div>${queue.length?queue.map(q=>q.html).join(''):`<div class="empty"><b>Nothing waiting.</b>New requests and deals appear here as partners send them.</div>`}</section>
+ <div class="two"><section class="card"><div class="card-h"><div><h2>Needs you</h2><p>Oldest first. Decide here, or open one for details.</p></div>${viewToggle('needs')}</div>${queue.length?rows('needs',queue.map(q=>q.html).join('')):`<div class="empty"><b>Nothing waiting.</b>New requests and deals appear here as partners send them.</div>`}</section>
  <section class="card"><div class="card-h"><div><h2>Recent activity</h2><p>Across your programs</p></div></div>${feed(db.activity.filter(a=>a.vendor===myCo()))}</section></div>`}
 function vRequests(){const f=filter.req||'waiting',all=V.memberships(),waiting=V.waiting(),list=f==='waiting'?waiting:all.filter(m=>m.status===f).sort((a,b)=>(b.decidedAt||'').localeCompare(a.decidedAt||''));
  return `<div class="ph"><div><h1>Partnership requests</h1><p>Companies that applied to your partner programs.</p></div></div>
- <section class="card"><div class="card-h">${seg('req',[['waiting','Waiting',waiting.length],['Accepted','Accepted',all.filter(m=>m.status==='Accepted').length],['Declined','Declined',all.filter(m=>m.status==='Declined').length]],f)}</div>
- ${list.length?list.map(m=>requestRow(m)).join(''):`<div class="empty"><b>No ${f==='waiting'?'requests waiting':f.toLowerCase()+' requests'}.</b>${f==='waiting'?'New applications appear here.':''}</div>`}</section>`}
+ <section class="card"><div class="card-h">${seg('req',[['waiting','Waiting',waiting.length],['Accepted','Accepted',all.filter(m=>m.status==='Accepted').length],['Declined','Declined',all.filter(m=>m.status==='Declined').length]],f)}${viewToggle('req')}</div>
+ ${list.length?rows('req',list.map(m=>requestRow(m)).join('')):`<div class="empty"><b>No ${f==='waiting'?'requests waiting':f.toLowerCase()+' requests'}.</b>${f==='waiting'?'New applications appear here.':''}</div>`}</section>`}
 function vReceived(){const f=filter.deal||'Submitted',all=V.deals(),list=(f==='all'?all:all.filter(d=>d.status===f)).sort((a,b)=>f==='Submitted'?a.submittedAt.localeCompare(b.submittedAt):(b.decidedAt||b.submittedAt).localeCompare(a.decidedAt||a.submittedAt));
  return `<div class="ph"><div><h1>Received deals</h1><p>Deals your partners submitted. Add the good ones to Salesforce.</p></div></div>
- <section class="card"><div class="card-h">${seg('deal',[['Submitted','New',all.filter(d=>d.status==='Submitted').length],['In Salesforce','In Salesforce',all.filter(d=>d.status==='In Salesforce').length],['Declined','Declined',all.filter(d=>d.status==='Declined').length],['all','All',all.length]],f)}</div>
- ${list.length?list.map(d=>dealRowVendor(d)).join(''):`<div class="empty"><b>No deals here.</b>${f==='Submitted'?'New partner deals appear here as they’re submitted.':''}</div>`}</section>`}
+ <section class="card"><div class="card-h">${seg('deal',[['Submitted','New',all.filter(d=>d.status==='Submitted').length],['In Salesforce','In Salesforce',all.filter(d=>d.status==='In Salesforce').length],['Declined','Declined',all.filter(d=>d.status==='Declined').length],['all','All',all.length]],f)}${viewToggle('deal')}</div>
+ ${list.length?rows('deal',list.map(d=>dealRowVendor(d)).join('')):`<div class="empty"><b>No deals here.</b>${f==='Submitted'?'New partner deals appear here as they’re submitted.':''}</div>`}</section>`}
 function vPartners(){const ids=V.partners();
  return `<div class="ph"><div><h1>My partners</h1><p>${ids.length} companies in your programs.</p></div></div><section class="card"><div class="cards3">${ids.map(id=>{const c=co(id),ms=V.memberships().filter(m=>m.partner===id&&m.status==='Accepted'),ds=V.deals().filter(d=>d.partner===id),sf=ds.filter(d=>d.status==='In Salesforce');
  return `<article class="pcard"><div style="display:flex;gap:10px;align-items:center"><span class="av">${ini(c.name)}</span><div><h3>${esc(c.name)}</h3><p>${esc(c.region)} · ${esc(c.size)}</p></div></div><div class="perks">${ms.map(m=>`<span>${esc(prog(m.program).name)}</span>`).join('')}</div><dl class="kv"><dt>Deals submitted</dt><dd>${ds.length}</dd><dt>In Salesforce</dt><dd>${money(sf.reduce((n,d)=>n+d.value,0))}</dd></dl></article>`}).join('')}</div></section>`}
@@ -660,7 +677,7 @@ function pHome(){const opps=P.opps(),deals=P.deals(),ready=opps.filter(o=>oppSta
  <div class="stats"><a class="stat" href="#mydeals" data-act="nav" data-view="mydeals"><span>Ready to send</span><strong>${ready.length}</strong><small>${ready.length?short(ready.reduce((n,o)=>n+o.amount,0))+' not sent to a vendor yet':'Every deal has been sent'}</small></a>
  <a class="stat" href="#mydeals" data-act="nav" data-view="mydeals"><span>Waiting for a decision</span><strong>${open.length}</strong><small>Across ${new Set(open.map(vendorOf)).size} vendors</small></a>
  <div class="stat hero"><span>Your deals in Salesforce</span><strong>${short(sf.reduce((n,d)=>n+d.value,0))}</strong><small>${sf.length} accepted by vendors</small></div></div>
- <div class="two"><section class="card"><div class="card-h"><div><h2>Your deals</h2><p>Who you sent each one to, and what they decided</p></div><button class="btn btn-line btn-sm" data-act="nav" data-view="mydeals">View all</button></div>${opps.length?opps.slice(0,5).map(oppRow).join(''):`<div class="empty"><b>No deals yet.</b>Import from Salesforce or add one manually.</div>`}</section>
+ <div class="two"><section class="card"><div class="card-h"><div><h2>Your deals</h2><p>Who you sent each one to, and what they decided</p></div><div class="card-acts">${viewToggle('yourdeals')}<button class="btn btn-line btn-sm" data-act="nav" data-view="mydeals">View all</button></div></div>${opps.length?rows('yourdeals',opps.slice(0,5).map(oppRow).join('')):`<div class="empty"><b>No deals yet.</b>Import from Salesforce or add one manually.</div>`}</section>
  <section class="card"><div class="card-h"><div><h2>Recent activity</h2><p>Your sends and vendor decisions</p></div></div>${feed(db.activity.filter(a=>a.partner===myCo()))}</section></div>`}
 function pSubmit(prefill={}){const joined=P.joined();
  if(!joined.length)return `<div class="ph"><div><h1>Add a deal</h1></div></div><section class="card"><div class="empty"><b>Join a vendor program first.</b>Once a vendor accepts you, you can submit deals to them.<br><br><button class="btn btn-primary" data-act="nav" data-view="vendors">Find programs</button></div></section>`;
@@ -683,13 +700,13 @@ function pSubmit(prefill={}){const joined=P.joined();
 function pDeals(){const f=filter.my||'all',all=P.opps(),list=f==='all'?all:all.filter(o=>oppState(o)===f),n=k=>all.filter(o=>oppState(o)===k).length;
  return `<div class="ph"><div><h1>My deals</h1><p>Every deal you have, where you sent it, and what each vendor decided.</p></div><div class="ph-acts"><button class="btn btn-line" data-act="sf-import">${SFI}Import from Salesforce</button><button class="btn btn-primary" data-act="nav" data-view="submit">${ic('plus')}Add a deal</button></div></div>
  ${sfBanner()}
- <section class="card"><div class="card-h">${seg('my',[['all','All',all.length],['Not sent','Not sent',n('Not sent')],['Waiting','Waiting',n('Waiting')],['In Salesforce','In Salesforce',n('In Salesforce')],['Declined','Declined',n('Declined')]],f)}</div>
- ${list.length?list.map(oppRow).join(''):`<div class="empty"><b>No deals here.</b>${f==='Not sent'?'Every deal has been sent to a vendor.':''}</div>`}</section>`}
+ <section class="card"><div class="card-h">${seg('my',[['all','All',all.length],['Not sent','Not sent',n('Not sent')],['Waiting','Waiting',n('Waiting')],['In Salesforce','In Salesforce',n('In Salesforce')],['Declined','Declined',n('Declined')]],f)}${viewToggle('my')}</div>
+ ${list.length?rows('my',list.map(oppRow).join('')):`<div class="empty"><b>No deals here.</b>${f==='Not sent'?'Every deal has been sent to a vendor.':''}</div>`}</section>`}
 function pVendors(){const joined=P.joined(),apps=P.memberships().filter(m=>['Applied','Under review','Declined'].includes(m.status)),open=P.open();
  const card=(p,foot)=>`<article class="pcard"><div style="display:flex;gap:10px;align-items:center"><span class="av vendor">${ini(co(p.vendor).name)}</span><div><h3>${esc(p.name)}</h3><p>${esc(co(p.vendor).name)}</p></div></div><p>${esc(p.summary)}</p><div class="perks">${p.perks.map(x=>`<span>${esc(x)}</span>`).join('')}</div><div class="foot">${foot}</div></article>`;
  return `<div class="ph"><div><h1>My vendors</h1><p>Programs you belong to, your applications, and programs you can join.</p></div></div>
  <section class="card"><div class="card-h"><div><h2>Programs you’re in</h2></div></div>${joined.length?`<div class="cards3">${joined.map(m=>card(prog(m.program),`${pill('Accepted')}<button class="btn btn-primary btn-sm" data-act="submit-to" data-program="${m.program}">Submit a deal</button>`)).join('')}</div>`:`<div class="empty">You haven’t joined a program yet.</div>`}</section>
- ${apps.length?`<section class="card"><div class="card-h"><div><h2>Your applications</h2><p>Vendors review these and decide.</p></div></div>${apps.map(m=>{const p=prog(m.program);return `<div class="row" data-row="${m.id}"><div class="rmain"><span class="av vendor">${ini(co(p.vendor).name)}</span><span class="rtext"><b>${esc(co(p.vendor).name)} · ${esc(p.name)}</b><small>Applied ${ago(m.appliedAt)}${m.reason?' · '+esc(m.reason):''}</small></span></div><div class="ract">${pill(m.status)}</div></div>`}).join('')}</section>`:''}
+ ${apps.length?`<section class="card"><div class="card-h"><div><h2>Your applications</h2><p>Vendors review these and decide.</p></div>${viewToggle('apps')}</div>${rows('apps',apps.map(m=>{const p=prog(m.program);return `<div class="row" data-row="${m.id}"><div class="rmain"><span class="av vendor">${ini(co(p.vendor).name)}</span><span class="rtext"><b>${esc(co(p.vendor).name)} · ${esc(p.name)}</b><small>Applied ${ago(m.appliedAt)}${m.reason?' · '+esc(m.reason):''}</small></span></div><div class="ract">${pill(m.status)}</div></div>`}).join(''))}</section>`:''}
  <section class="card"><div class="card-h"><div><h2>Find programs</h2><p>Apply, and the vendor’s program manager reviews your request.</p></div></div>${open.length?`<div class="cards3">${open.map(p=>card(p,`<span></span><button class="btn btn-primary btn-sm" data-act="apply" data-program="${p.id}">Apply</button>`)).join('')}</div>`:`<div class="empty">You’ve applied to every available program.</div>`}</section>`}
 
 /* ---------- details ---------- */
@@ -769,6 +786,7 @@ document.addEventListener('click',e=>{
  if(a==='switch'){const role=session.role==='ppm'?'pm':'ppm';session={role,method:session.method};saveSession();chatLog={};toggleChat(false);view='home';history.replaceState(null,'','#home');render();toast('Now viewing as '+USERS[role].title+' ('+co(USERS[role].company).name+').');return}
  if(a==='theme'){const r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('pa-prm-theme',r.dataset.theme)}catch{}return}
  if(a==='filter'){filter[t.dataset.key]=t.dataset.val;render();return}
+ if(a==='layout'){layouts[t.dataset.key]=t.dataset.val;try{localStorage.setItem(LKEY,JSON.stringify(layouts))}catch{}render();return}
  if(a==='close')return closeAll();
  if(a==='open-req')return reqDrawer(id);
  if(a==='open-deal')return dealDrawer(id);
