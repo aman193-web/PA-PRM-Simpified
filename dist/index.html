@@ -234,6 +234,7 @@ a.stat:hover{border-color:var(--brand)}
 .row:first-child{border-top:0}
 .card-acts{display:flex;align-items:center;gap:8px}
 .vt button{display:grid;place-items:center;padding:5px 8px}.vt svg{width:16px;height:16px}
+.seg.vt{flex:none}.card-h:has(>.vt){flex-wrap:nowrap}.card-h:has(>.vt)>:first-child{min-width:0}
 .rows.as-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;padding:16px 20px 20px}
 .rows.as-cards .row{grid-template-columns:minmax(0,1fr);align-content:space-between;gap:14px;padding:16px;border:1px solid var(--border);border-radius:12px;background:var(--surface);transition:border-color .15s,box-shadow .15s}
 .rows.as-cards .row:hover{border-color:var(--border-strong);box-shadow:var(--shadow)}
@@ -339,10 +340,11 @@ h3.sec{font-size:13px;color:var(--muted);font-weight:600;margin:22px 0 8px}
  .auth{grid-template-columns:1fr}.auth-side{padding:28px 24px}.scene{display:none}.auth-points{grid-template-columns:1fr 1fr 1fr;margin-top:18px}.auth-points li{padding:10px}.auth-side h1{font-size:30px}
  .app{grid-template-columns:1fr}.side{display:none}.top .mob-only{display:grid}
  .top{padding:10px 16px}.top .sf span,.top .sf-connect span{display:none}.top .sf{width:30px;height:30px;padding:0;justify-content:center}.top .sf-connect{padding:6px 9px}.top .mlogo{display:inline-flex}.top .crumb{display:none}
+ .pop{position:fixed;left:12px;right:12px;top:calc(66px + env(safe-area-inset-top,0px));width:auto;max-height:calc(100dvh - 170px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
  .page{padding:22px 16px 150px}
  .stats{grid-template-columns:1fr 1fr}.stats .stat.hero{grid-column:1/-1}
  .two{grid-template-columns:1fr}
- .row{grid-template-columns:1fr}.ract{justify-content:flex-start}
+ .row{grid-template-columns:1fr}.ract{justify-content:flex-start}.ract .amt{flex:1 0 100%;margin:0}.ract .btn{flex:1 1 auto}
  .grid2{grid-template-columns:1fr}
  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);border-top:1px solid var(--border);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
  .tabbar a{flex:1;display:grid;justify-items:center;gap:2px;padding:6px 2px;border-radius:10px;font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;position:relative}
@@ -351,6 +353,11 @@ h3.sec{font-size:13px;color:var(--muted);font-weight:600;margin:22px 0 8px}
  .tabbar .count{position:absolute;top:2px;left:calc(50% + 6px);min-width:17px;height:17px;padding:0 5px;border-radius:9px;background:var(--accent);color:#2a1a00;font-size:10.5px;line-height:17px}
  .ask{bottom:calc(78px + env(safe-area-inset-bottom,0px));right:14px;padding:13px}.ask span{display:none}
  .chat{right:14px;bottom:calc(140px + env(safe-area-inset-bottom,0px));height:min(520px,calc(100% - 200px))}
+}
+@media (max-width:400px){
+ .top{gap:6px;padding:10px 12px}.top .iconbtn{width:34px;height:34px}.top .sf-connect{padding:5px 7px}.top .sf{width:28px;height:28px}
+ .top .mlogo .logo-mark{font-size:17px;gap:6px}.top .mlogo svg{width:22px;height:22px}
+ .page{padding-left:12px;padding-right:12px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -694,7 +701,7 @@ function pSubmit(prefill={}){const joined=P.joined();
  <div class="field"><label for="f-value">Deal value (USD)</label><input class="input" id="f-value" name="value" inputmode="numeric" value="${esc(prefill.value||'')}" placeholder="50000" required></div></div>
  <div class="field"><label for="f-close">Expected close date</label><input class="input" id="f-close" name="close" type="date" value="${esc(prefill.close||'')}" required></div>
  <div class="field"><label for="f-need">What does the customer need?</label><textarea class="input" id="f-need" name="need" placeholder="In a sentence or two: the problem, and why now." required>${esc(prefill.need||'')}</textarea></div>
- <p class="err" id="deal-err" role="alert"></p><div style="display:flex;justify-content:flex-end;gap:8px"><button type="button" class="btn btn-line" data-act="nav" data-view="home">Cancel</button><button class="btn btn-primary" type="submit" id="deal-submit">Submit to ${esc(co(prog(first).vendor).name)}</button></div></form></section>
+ <p class="err" id="deal-err" role="alert"></p><div style="display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px"><button type="button" class="btn btn-line" data-act="nav" data-view="home">Cancel</button><button class="btn btn-primary" type="submit" id="deal-submit">Submit to ${esc(co(prog(first).vendor).name)}</button></div></form></section>
  <section class="card"><div class="card-h"><div><h2>What happens next</h2></div></div><div style="padding:18px 20px"><ol class="next"><li><span class="n">1</span><span><b>Your vendor checks it</b>They look for conflicts with other partners’ deals.</span></li><li><span class="n">2</span><span><b>They add it to Salesforce</b>It becomes an opportunity in their CRM, and the deal is protected for you.</span></li><li><span class="n">3</span><span><b>Every send is logged</b>My deals shows who you sent it to and when, so you never send twice by mistake.</span></li></ol>
  <div class="callout info" style="margin-bottom:0">Tip: you can also just tell your copilot, “Submit a $50K deal with Chevron closing in March.”</div></div></section></div>`}
 function pDeals(){const f=filter.my||'all',all=P.opps(),list=f==='all'?all:all.filter(o=>oppState(o)===f),n=k=>all.filter(o=>oppState(o)===k).length;
